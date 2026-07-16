@@ -1,0 +1,13 @@
+{
+  "name": "blueprint-forge",
+  "owner": { "name": "Sean Lindsay" },
+  "description": "Marketplace for the Blueprint Forge plugin.",
+  "plugins": [
+    {
+      "name": "blueprint-forge",
+      "source": "./",
+      "description": "Blueprint-driven build pipeline: premium-model blueprinting behind human gates, cheap-model builders executing cold, in-session review.",
+      "version": "1.3.0"
+    }
+  ]
+}

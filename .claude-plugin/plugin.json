@@ -1,0 +1,7 @@
+{
+  "name": "blueprint-forge",
+  "description": "Blueprint-driven build pipeline: premium-model blueprinting behind human gates, cheap-model builders executing cold, in-session review. Skills: blueprint-backlog, blueprint-implement, blueprint-oneshot.",
+  "version": "1.3.0",
+  "author": { "name": "Sean Lindsay", "email": "seanlindsay2008@gmail.com" },
+  "license": "MIT"
+}
