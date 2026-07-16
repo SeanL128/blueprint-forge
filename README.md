@@ -1,6 +1,6 @@
 # Blueprint Forge
 
-Plan work as reviewable *blueprints* with your best model, then hand the build to cheaper ones — a Claude Code plugin that forces the interview step models love to skip.
+A Claude Code plugin to plan work as reviewable *blueprints* with your best model, then hand the build to cheaper ones.
 
 ![license](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
 ![plugin](https://img.shields.io/badge/claude_code-plugin-orange?style=flat-square)
