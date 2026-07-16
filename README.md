@@ -7,14 +7,14 @@ Plan work as reviewable *blueprints* with your best model, then hand the build t
 
 ## Why
 
-You can't trust that the powerful model you have today will still be there next week when you actually want to build — watching Claude Fable get pulled from the market made that concrete. Blueprint Forge solves it by spending the big model *while you still have it* on the part only it can do well: interviewing you about every ambiguity, then writing self-contained blueprints. The blueprints and their run-order ledger sit in your repo, so any cheaper model you still have access to can execute them cold — next week, next month, whenever — and the result is basically the same quality, because every decision was already made and written down.
+You can't trust that the powerful model you have today will still be there next week when you actually want to build; watching Claude Fable get pulled from the market made that concrete. Blueprint Forge solves it by spending the big model *while you still have it* on the part only it can do well: interviewing you about every ambiguity, then writing self-contained blueprints. The blueprints and their run-order ledger sit in your repo, so any cheaper model you still have access to can execute them cold - next week, next month, whenever - and the result is basically the same quality, because every decision was already made and written down.
 
 Two more things it buys:
 
 - **An interview gate that actually fires.** Every autonomous run eventually hits an ambiguous spec and resolves it with a coin flip. In my blind benchmarks (20+ graded runs), the hard interview stop caught every planted ambiguity in 8/8 runs, while plain sessions asked zero questions and advisory gates self-waived every time they ran headless.
 - **Usage-limit arbitrage.** Plan with your strongest model, build on whatever's cheap — including a different vendor's subscription entirely (see the Claude + GPT split below).
 
-**The honest caveat:** blueprints are easily invalidated by a pivot. Use the split path only on a project where the direction is certain and the decisions are made — all that's left is the building. If that's not true yet, use `blueprint-oneshot` for the one task in front of you, or run a separate session to settle the direction first and blueprint after.
+**The honest caveat:** blueprints are easily invalidated by a pivot. Use the split path only on a project where the direction is certain, the decisions are made, and all that's left is the building. If that's not true yet, use `blueprint-oneshot` for the one task in front of you, or run a separate session to settle the direction first and blueprint after.
 
 **Learn more →** [seanlindsay.xyz/blueprint-forge](https://seanlindsay.xyz/blueprint-forge)
 
