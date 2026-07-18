@@ -1,72 +1,65 @@
-# Blueprint Forge
+<div align="center">
 
-A Claude Code plugin that has your most powerful model interview you and write reviewable blueprints while you still have it, so that the cheaper models you'll still have later can build them cold.
+<img src="docs/banner.svg" alt="Blueprint Forge" width="440" />
 
-![version](https://img.shields.io/badge/version-1.3.0-blue?style=flat-square)
-![Claude Code plugin](https://img.shields.io/badge/Claude_Code-plugin-d97757?style=flat-square)
-![license](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
+**A Claude Code plugin that has your most powerful model interview you and write reviewable blueprints while you still have it, so that the cheaper models you'll still have later can build them cold.**
+
+![version](https://img.shields.io/badge/version-1.3.0-blue?style=flat-square) ![Claude Code plugin](https://img.shields.io/badge/Claude_Code-plugin-d97757?style=flat-square) ![license](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
+
+[Learn more →](https://seanlindsay.xyz/blueprint-forge) · [Install](#quick-start) · [Roadmap](#roadmap)
+
+</div>
 
 ## Why
 
-After the US Government blocked users from using Fable 5 for almost three weeks, it became clear that you can't assume the high-tier model you have today will still be there a week from now when you want to actually build the thing you have planned. Blueprint Forge helps alleviate that problem by allowing you to batch-create blueprints once that are descriptive enough for cheaper models to follow months from now to create a result that is just about as good as if the high-tier model wrote it. The blueprinting process even accounts for the build order so that every blueprint is building off of what will exist when it is reached rather than simply what exists when it is created.
+I built this after the US Government blocked users from using Fable 5 for almost three weeks, which showed that you can't assume the high-tier model you have today will still be there a week from now when you want to actually build the thing you have planned. Blueprint Forge lets you batch-create blueprints once that are descriptive enough for cheaper models to follow months from now to create a result that is just about as good as if the high-tier model wrote it, and the blueprinting process accounts for the build order so that every blueprint is building off of what will exist when it is reached rather than simply what exists when it is created. One caveat is important to understand before using this: a pivot in the project's direction will likely invalidate any unused blueprints, so only blueprint up to the point that you are 100% certain of, and use `blueprint-oneshot` for the one task in front of you until the direction settles.
 
-There is, however, a caveat that is important to understand before using this: making any pivot in the project and its end state will likely invalidate any unused blueprints, so only blueprint a direction that you are 100% certain of, or blueprint up to the point that you are 100% certain of, else you risk wasting premium tokens. If that isn't true yet, use `blueprint-oneshot` for the one task in front of you and blueprint the rest after the direction settles.
+## Features
 
-**Learn more →** [seanlindsay.xyz/blueprint-forge](https://seanlindsay.xyz/blueprint-forge)
+- **A hard interview gate** — every run opens with `QUESTIONS FIRST`, asks only the questions whose answers change what a builder produces, then stops and waits, because a wrong guess wastes a whole build.
+- **Batch blueprinting with per-item approval** — `blueprint-backlog` turns a backlog or TODO into one blueprint per item, each of which you approve, revise, or reject in a single batch gate.
+- **Run-order-aware blueprints** — a `RUN-ORDER.md` ledger orders the work so each blueprint assumes the state the previous ones leave behind, and its closed status vocabulary makes the plan resumable across sessions.
+- **Role-based model routing** — blueprints name roles (blueprinter, builder-light through builder-heavy, reviewer), never model IDs, and `blueprints/MODELS.md` maps each role to a model, including per-role dispatch commands that can send builds to another harness entirely.
+- **Review against the blueprint** — `blueprint-implement` re-runs every definition-of-done check itself after the builder reports, escalating to a heavier reviewer only when a risk trigger fires.
+- **A oneshot path** — `blueprint-oneshot` takes a single task end to end with two stops (interview and approval), then builds and reviews autonomously.
 
 ## Quick start
 
-In Claude Code:
-
-```
+```sh
 /plugin marketplace add SeanL128/blueprint-forge
 /plugin install blueprint-forge@blueprint-forge
 ```
 
-Or send Claude this repo and have it install the skills.
+Runs inside Claude Code; all three skills are user-invoked only, because they deliberately spend premium planning-model tokens.
 
-## The skills
+## Configuration
 
-Two ways in. All are user-invoked only, because they deliberately spend premium planning-model tokens, so Claude never triggers them on its own.
+| Option | What it does | Default |
+|--------|--------------|---------|
+| `blueprinter` | grounds, interviews, writes and approves blueprints; the judgment layer | `Claude Fable` |
+| `implementer` | runs the implement session: dispatches builders, runs verify commands, keeps the ledger | `Claude Sonnet` |
+| `builder-light` | purely mechanical items: new standalone files, config from exact given values | `Claude Haiku` |
+| `builder-standard` | the default: touches existing code paths, has edge cases, reads before editing | `Claude Sonnet` |
+| `builder-heavy` | genuinely hard or high-risk work: cross-module changes, auth, migrations, shared state | `Claude Opus` |
+| `reviewer` | default review of built work against its blueprint | `Claude Sonnet` |
+| `reviewer-heavy` | escalated review: high-risk items, builder-flagged uncertainty, verify failures | `Claude Opus` |
 
-| Command | Path | What it does |
-|---|---|---|
-| `/blueprint-forge:blueprint-oneshot <task>` | Oneshot | One task end to end: interview, blueprint, your approval, then an autonomous build and review. The lowest-friction entry point. |
-| `/blueprint-forge:blueprint-backlog [path]` | Split, step 1 | Turns a backlog or TODO into approved blueprints (approve, revise, or reject each) plus a resumable run-order ledger. |
-| `/blueprint-forge:blueprint-implement [path]` | Split, step 2 | Builds one approved blueprint: dispatches its builder subagents, reviews the result against it, then routes ship / fix / re-dispatch / re-blueprint. |
+More in [docs/USAGE.md](docs/USAGE.md).
 
-Model-agnostic by design: everything is routed by role (blueprinter / implementer / builder-light / builder-standard / builder-heavy / reviewer / reviewer-heavy), never by model ID. The routing lives in your repo's `blueprints/MODELS.md`, created on first run with a default all-Claude split, and sending builds elsewhere is just a matter of editing that map.
+## Roadmap
 
-## The split I actually run: Claude blueprints, GPT builds
+- [x] Oneshot and split paths, benchmarked blind before release
+- [x] Worked Claude + GPT split via per-role Codex dispatch commands
+- [x] Plugin packaging, with the repo as its own marketplace
 
-The default map keeps everything on Claude, but the setup that has been best in my experience routes the builder roles to the GPT-5.6 family through the Codex CLI while keeping the judgment roles (blueprinter, reviewer) on Claude:
+## License
 
-- Building burns the large majority of tokens, and with builds on a separate $20 ChatGPT subscription, my Claude 5-hour and weekly limits are barely dented while Claude still does everything judgment-shaped.
-- Cross-vendor review is a free win, since a Claude reviewer doesn't share a GPT builder's systematic failure modes or biases.
-
-The worked map: copy the builder rows over your `blueprints/MODELS.md` and adjust to taste (the skills themselves need no changes).
-
-| Role | Model | Dispatch | Fits |
-|------|-------|----------|------|
-| blueprinter | Claude Fable | | writes the blueprints in the native harness, same as the suite's default map |
-| builder-light | gpt-5.6-luna | `codex exec --skip-git-repo-check --sandbox workspace-write -m {model} -c model_reasoning_effort=high "{prompt}"` | purely mechanical items |
-| builder-standard | gpt-5.6-terra | `codex exec --skip-git-repo-check --sandbox workspace-write -m {model} -c model_reasoning_effort=high "{prompt}"` | default: touches existing code, edge cases |
-| builder-heavy | gpt-5.6-sol | `codex exec --skip-git-repo-check --sandbox workspace-write -m {model} -c model_reasoning_effort=medium "{prompt}"` | genuinely hard or high-risk work (escalate `model_reasoning_effort` to `high` after a failed re-dispatch) |
-| reviewer | Claude Sonnet | | default review of built work against its blueprint (native harness) |
-| reviewer-heavy | Claude Opus | | escalated review: high-risk items, builder-flagged uncertainty, verify failures, second-attempt builds (native harness) |
-
-Notes:
-
-- Prereqs: Codex CLI installed and authenticated (`npm install -g @openai/codex`, then `codex login`). The dispatch commands run Codex non-interactively in the current repo.
-- Reasoning effort rides in the dispatch command (`-c model_reasoning_effort=…`), since the Dispatch column is a full command template, so any per-role knob lives there.
-- Drop `--skip-git-repo-check` if you always run inside a git repo; keep it if builders may run before the first commit. `--sandbox workspace-write` is required so builders can edit the repo.
-- **Caveat:** this routes only *builder* roles to GPT, and it was validated blind (Terra/Sol builders shipped 4/4 blueprints clean in my test runs). Don't generalize it to running the *orchestrating* skills on a GPT harness: in my benchmarks, GPT orchestrators asked zero interview questions in 3/3 runs where Claude orchestrators held the stop 6/6. Keep blueprinter/reviewer on Claude.
-
-## What I learned / what broke
-
-- Advisory process gates do not survive autonomy. Every suite I tested that merely recommends asking questions waived its own gate the moment it ran headless, five out of five, while the hard stop-and-wait caught every planted ambiguity in 8/8 blind runs.
-- Blind graders penalize negotiated answers, so the resolution you actually chose in an interview can grade worse than the guess a judge would have made. The value shows up in variance rather than means, which changed how I position the suite: insurance, not a quality upgrade.
-- The economics only work with routing. Pinned to one premium model, the pipeline costs 3 to 4 times a plain session, and arbitraging the build tokens to cheaper builders cut that premium to about 1.5 times.
+[MIT](LICENSE)
 
 ---
+
+<div align="center">
+
 Built by Sean Lindsay · [seanlindsay.xyz](https://seanlindsay.xyz)
+
+</div>
